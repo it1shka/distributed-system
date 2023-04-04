@@ -30,6 +30,10 @@ class Computer (
         network.clear()
     }
 
+    fun forceAddProcess(process: Process) {
+        processes.add(process)
+    }
+
     fun connect(computer: Computer) = network.add(computer)
 
     private fun requestSendProcess(process: Process): Boolean {

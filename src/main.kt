@@ -45,6 +45,10 @@ object Window: JFrame("Network") {
                         computers.forEach { it.dispose() }
                         computers.clear()
                     }
+                    KeyEvent.VK_A -> {
+                        val randomProcess = ProcessGenerator.getRandomProcess()
+                        computers.randomOrNull()?.forceAddProcess(randomProcess)
+                    }
                 }
             }
         })

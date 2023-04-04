@@ -2,23 +2,21 @@ import kotlin.random.Random
 import kotlin.random.nextInt
 
 class Process (
-    private val name: String,
+    val name: String,
     private var lifetime: Int,
-    private val averageLoad: Int,
-    private val loadRange: Int = 10
+    private val averageWorkload: Int,
+    private val workloadRange: Int = 10
 ) {
-    private var currentLoad = 0
+    var workload: Int = 0
+        private set
+
     val active get() = lifetime > 0
 
-    fun execute(): Int {
-        if (!active) return 0
-        currentLoad =  averageLoad + Random.nextInt(-loadRange .. loadRange)
+    fun execute() {
+        if (!active) return
+        val currentRange = Random.nextInt(-workloadRange .. workloadRange)
+        workload =  averageWorkload + currentRange
         lifetime--
-        return currentLoad
-    }
-
-    override fun toString(): String {
-        return "$name ($currentLoad)"
     }
 }
 
@@ -33,16 +31,15 @@ object ProcessGenerator {
         return "$name$index$extension"
     }
 
-    private const val maxLoad = 30
-    private const val maxLoadRange = 10
-    private const val minLifetime = 20
-    private const val maxLifetime = 120
+    private val load = 5..30
+    private val loadRange = 1..10
+    private val lifetime = 20..120
 
     fun getRandomProcess(): Process {
         val name = getRandomName()
-        val load = Random.nextInt(maxLoad)
-        val range = Random.nextInt(maxLoadRange)
-        val lifetime = Random.nextInt(minLifetime .. maxLifetime)
+        val load = Random.nextInt(load)
+        val range = Random.nextInt(loadRange)
+        val lifetime = Random.nextInt(lifetime)
         return Process(name, lifetime, load, range)
     }
 }

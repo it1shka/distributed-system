@@ -31,9 +31,9 @@ object ProcessGenerator {
         return "$name$index$extension"
     }
 
-    private val load = 5..30
-    private val loadRange = 1..10
-    private val lifetime = 20..120
+    private val load = 2..10
+    private val loadRange = 1..3
+    private val lifetime = 100..250
 
     fun getRandomProcess(): Process {
         val name = getRandomName()

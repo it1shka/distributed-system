@@ -25,6 +25,11 @@ class Computer (
         balance()
     }
 
+    fun dispose() {
+        processes.clear()
+        network.clear()
+    }
+
     fun connect(computer: Computer) = network.add(computer)
 
     private fun requestSendProcess(process: Process): Boolean {
@@ -35,6 +40,8 @@ class Computer (
     }
 
     private fun requestReceiveProcess(expectedWorkload: Int): Process? {
+        if ((type == "Min" || type == "MinMax") && workload <= minThreshold)
+            return null
         val process = processes
             .filter { it.workload <= expectedWorkload }
             .maxByOrNull { it.workload }

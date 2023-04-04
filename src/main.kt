@@ -4,7 +4,6 @@ import java.awt.Graphics
 import java.awt.event.*
 import javax.swing.JFrame
 import javax.swing.WindowConstants
-import kotlin.concurrent.thread
 
 object Window: JFrame("Network") {
 
@@ -38,8 +37,14 @@ object Window: JFrame("Network") {
             override fun keyPressed(e: KeyEvent?) {
                 when (e?.keyCode) {
                     KeyEvent.VK_T -> chosenComputerTypeIndex++
-                    KeyEvent.VK_Z -> computers.removeLastOrNull()
-                    KeyEvent.VK_C -> computers.clear()
+                    KeyEvent.VK_Z -> {
+                        val maybeComputer = computers.removeLastOrNull()
+                        maybeComputer?.dispose()
+                    }
+                    KeyEvent.VK_C -> {
+                        computers.forEach { it.dispose() }
+                        computers.clear()
+                    }
                 }
             }
         })
@@ -72,6 +77,13 @@ object Window: JFrame("Network") {
         val (mouseX, mouseY) = mousePosition
         drawComputer(g, mouseX, mouseY, "Future", currentComputerType)
 
+        for ((a, b) in computers.allPairs()) {
+            g.color = colorOfComputer(b.type)
+            val (x1, y1) = a.position
+            val (x2, y2) = b.position
+            g.drawLine(x1, y1, x2, y2)
+        }
+
         for (each in computers) {
             drawComputer(g, each)
         }
@@ -94,13 +106,17 @@ object Window: JFrame("Network") {
     private fun drawComputer(g: Graphics, computer: Computer) {
         val (x, y) = computer.position
         drawComputer(g, x, y, computer.label, computer.type)
+        g.drawString("${computer.workload}%", x + 20, y + 5)
     }
+
+    fun update() = computers.forEach { it.update() }
 
 }
 
 fun main() {
     while (true) {
+        Window.update()
         Window.repaint()
-        Thread.sleep(10)
+        Thread.sleep(50)
     }
 }

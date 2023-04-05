@@ -121,6 +121,7 @@ fun main() {
     while (true) {
         Window.update()
         Window.repaint()
+        Logger.dump()
         Thread.sleep(50)
     }
 }

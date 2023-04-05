@@ -17,6 +17,7 @@ class Computer (
     fun update() {
         processes.forEach { it.execute() }
         workload = processes.sumOf { it.workload }
+        Logger.registerWorkload(workload)
         processes.removeIf { !it.active }
         maybe(newProcessChance) {
             val newProcess = ProcessGenerator.getRandomProcess()
@@ -37,6 +38,7 @@ class Computer (
     fun connect(computer: Computer) = network.add(computer)
 
     private fun requestSendProcess(process: Process): Boolean {
+        Logger.registerRequests()
         if (workload + process.workload > maxThreshold)
             return false
         processes.add(process)
@@ -44,6 +46,7 @@ class Computer (
     }
 
     private fun requestReceiveProcess(expectedWorkload: Int): Process? {
+        Logger.registerRequests()
         if ((type == "Min" || type == "MinMax") && workload <= minThreshold)
             return null
         val process = processes
@@ -73,6 +76,7 @@ class Computer (
             val maybeProcess = each.requestReceiveProcess(maxThreshold - workload)
             if (maybeProcess != null) {
                 processes.add(maybeProcess)
+                Logger.registerMigration(each.label, label, maybeProcess.name)
                 break
             }
         }
@@ -85,6 +89,7 @@ class Computer (
             val minimal = processes.minBy { it.workload }
             if (each.requestSendProcess(minimal)) {
                 processes.remove(minimal)
+                Logger.registerMigration(label, each.label, minimal.name)
                 break
             }
         }
